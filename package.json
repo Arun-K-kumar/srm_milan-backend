@@ -2,7 +2,7 @@
   "name": "srm_milan-backend",
   "version": "1.0.0",
   "description": "",
-  "main": "src/server.js",
+  "main": "index.js",
   "scripts": {
     "test": "node --test --test-concurrency=1 test/*.test.js",
     "start": "node src/server.js",
