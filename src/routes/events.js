@@ -10,6 +10,7 @@ module.exports = function eventsRouter() {
   const router = Router();
 
   const registerLimiter = rateLimit({
+    skip: () => process.env.NODE_ENV === 'test',
     windowMs: 60 * 1000,
     limit: 30,
     standardHeaders: true,

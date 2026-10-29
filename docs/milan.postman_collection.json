@@ -1,0 +1,46 @@
+{
+  "info": {
+    "name": "Milan Events API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "base_url", "value": "http://localhost:3000" },
+    { "key": "admin_api_key", "value": "change-me" },
+    { "key": "event_id", "value": "PASTE_EVENT_ID" }
+  ],
+  "item": [
+    { "name": "Health", "request": { "method": "GET", "url": "{{base_url}}/api/health" } },
+    {
+      "name": "Create event (admin)",
+      "request": {
+        "method": "POST",
+        "header": [
+          { "key": "Content-Type", "value": "application/json" },
+          { "key": "X-API-Key", "value": "{{admin_api_key}}" }
+        ],
+        "url": "{{base_url}}/api/events",
+        "body": { "mode": "raw", "raw": "{\n  \"title\": \"Milan Hack Night\",\n  \"description\": \"Build something cool.\",\n  \"category\": \"tech\",\n  \"start_datetime\": \"2027-03-01T18:00:00Z\",\n  \"venue\": \"Main Auditorium\",\n  \"capacity\": 100\n}" }
+      }
+    },
+    { "name": "List events", "request": { "method": "GET", "url": "{{base_url}}/api/events?page=1&limit=20" } },
+    { "name": "Filter by category", "request": { "method": "GET", "url": "{{base_url}}/api/events?category=tech" } },
+    { "name": "Get event", "request": { "method": "GET", "url": "{{base_url}}/api/events/{{event_id}}" } },
+    {
+      "name": "Register participant",
+      "request": {
+        "method": "POST",
+        "header": [{ "key": "Content-Type", "value": "application/json" }],
+        "url": "{{base_url}}/api/events/{{event_id}}/register",
+        "body": { "mode": "raw", "raw": "{\n  \"name\": \"Asha\",\n  \"email\": \"asha@example.com\"\n}" }
+      }
+    },
+    {
+      "name": "List registrations (admin)",
+      "request": {
+        "method": "GET",
+        "header": [{ "key": "X-API-Key", "value": "{{admin_api_key}}" }],
+        "url": "{{base_url}}/api/events/{{event_id}}/registrations"
+      }
+    }
+  ]
+}

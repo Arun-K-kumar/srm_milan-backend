@@ -1,0 +1,75 @@
+openapi: 3.0.3
+info:
+  title: Milan Events API
+  version: 1.0.0
+  description: Event discovery and participant registration. Admin endpoints need the X-API-Key header.
+servers:
+  - url: http://localhost:3000
+paths:
+  /api/health:
+    get:
+      summary: Health check (also checks the database)
+      responses: { '200': { description: OK }, '503': { description: Database unreachable } }
+  /api/events:
+    get:
+      summary: List events (paginated, filterable)
+      parameters:
+        - { name: category, in: query, schema: { type: string, enum: [tech, music, sports, arts, food, business, education, other] } }
+        - { name: upcoming, in: query, schema: { type: string, enum: ['true', 'false'] } }
+        - { name: page, in: query, schema: { type: integer, minimum: 1, default: 1 } }
+        - { name: limit, in: query, schema: { type: integer, minimum: 1, maximum: 100, default: 20 } }
+      responses: { '200': { description: List of events }, '400': { description: Invalid query } }
+    post:
+      summary: Create an event (admin)
+      security: [{ ApiKey: [] }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [title, description, category, start_datetime, venue, capacity]
+              properties:
+                title: { type: string, minLength: 3, maxLength: 200 }
+                description: { type: string }
+                category: { type: string, enum: [tech, music, sports, arts, food, business, education, other] }
+                start_datetime: { type: string, format: date-time, description: Must be in the future }
+                venue: { type: string }
+                capacity: { type: integer, minimum: 1 }
+      responses:
+        '201': { description: Created }
+        '400': { description: Validation error }
+        '401': { description: Missing API key }
+        '403': { description: Invalid API key }
+  /api/events/{id}:
+    get:
+      summary: Get an event by ID
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses: { '200': { description: Event }, '400': { description: Invalid id }, '404': { description: Not found } }
+  /api/events/{id}/register:
+    post:
+      summary: Register a participant for an event
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [name, email]
+              properties: { name: { type: string }, email: { type: string, format: email } }
+      responses:
+        '201': { description: Registered }
+        '400': { description: Validation error }
+        '404': { description: Event not found }
+        '409': { description: EVENT_FULL, ALREADY_REGISTERED or EVENT_CLOSED }
+        '429': { description: Rate limited }
+  /api/events/{id}/registrations:
+    get:
+      summary: List registrants of an event (admin)
+      security: [{ ApiKey: [] }]
+      parameters: [{ name: id, in: path, required: true, schema: { type: string } }]
+      responses: { '200': { description: Registrants }, '401': { description: Missing key }, '403': { description: Invalid key }, '404': { description: Event not found } }
+components:
+  securitySchemes:
+    ApiKey: { type: apiKey, in: header, name: X-API-Key }
