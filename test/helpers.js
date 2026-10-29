@@ -8,7 +8,7 @@ const { MongoMemoryServer } = require('mongodb-memory-server');
 async function setup() {
   const mongod = await MongoMemoryServer.create();
   process.env.MONGODB_URI = mongod.getUri('milan_test');
-  const { createApp } = require('../src/app');
+  const { createApp } = require('../src/createApp');
   return { api: request(createApp()), mongod };
 }
 
