@@ -15,7 +15,7 @@ function createApp() {
   app.use(express.json({ limit: '50kb' }));
 
   app.get('/', (_req, res) => {
-    res.json({ name: 'Milan Events API', health: '/api/health' });
+    res.json({ name: 'Milan Events', health: '/api/health' });
   });
 
   app.get('/api/health', async (_req, res) => {
