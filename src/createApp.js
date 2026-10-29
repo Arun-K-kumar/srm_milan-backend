@@ -6,8 +6,7 @@ const { AppError } = require('./errors');
 const eventsRouter = require('./routes/events');
 const { notFoundHandler, errorHandler } = require('./middleware/errorHandler');
 
-function createApp() {
-  const app = express();
+function createApp(app = express()) {
   app.set('trust proxy', 1);
   app.disable('x-powered-by');
   app.use(helmet());
